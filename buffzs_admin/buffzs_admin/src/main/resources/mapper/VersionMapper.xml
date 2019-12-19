@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.VersionMapper">
+
+    <resultMap id="resultVersion" type="com.bahu.buffzs.pojo.BuffApkVersion">
+        <id column="ID" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="version" property="version"/>
+        <result column="about1" property="about1"/>
+        <result column="about2" property="about2"/>
+        <result column="about3" property="about3"/>
+        <result column="about4" property="about4"/>
+        <result column="about5" property="about5"/>
+        <result column="downurl" property="downurl"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_If_force" property="updateIfForce"/>
+        <result column="apkType" property="apkType"/>
+        <result column="updateTime" property="updateTime"/>
+        <result column="channelNum" property="channelNum"/>
+        <result column="oldDownurl" property="oldDownurl"/>
+    </resultMap>
+
+    <select id="findAll"  resultMap="resultVersion">
+        SELECT * FROM buff_apk_version ORDER BY create_time DESC
+    </select>
+
+    <select id="findById" resultMap="resultVersion">
+        SELECT * FROM buff_apk_version WHERE id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffApkVersion">
+        INSERT INTO buff_apk_version
+        (name,code,version,about1,about2,about3,about4,about5,downurl,create_time,update_If_force,apkType ,updateTime)
+        VALUES
+        (#{name},#{code},#{version},#{about1},#{about2},#{about3},#{about4},#{about5},#{downurl},#{createTime},#{updateIfForce},#{apkType},#{updateTime})
+    </insert>
+
+    <update id="updateSave">
+        UPDATE buff_apk_version SET
+        <if test="name != null">
+            name = #{name},
+        </if>
+        <if test="code != null">
+            code = #{code},
+        </if>
+        <if test="version != null">
+            version = #{version},
+        </if>
+        <if test="about1 != null">
+            about1 = #{about1},
+        </if>
+        <if test="about2 != null">
+            about2 = #{about2},
+        </if>
+        <if test="about3 != null">
+            about3 = #{about3},
+        </if>
+        <if test="about4 != null">
+            about4 = #{about4},
+        </if>
+        <if test="about5 != null">
+            about5 = #{about5},
+        </if>
+        <if test="downurl != null">
+            downurl = #{downurl},
+        </if>
+        <if test="oldDownurl != null">
+            oldDownurl = #{oldDownurl},
+        </if>
+        <if test="updateIfForce != null">
+            update_If_force = #{updateIfForce},
+        </if>
+        <if test="updateTime != null">
+            updateTime = #{updateTime},
+        </if>
+        <if test="channelNum != null">
+            channelNum = #{channelNum},
+        </if>
+        <if test="apkType != null">
+            apkType = #{apkType}
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM buff_apk_version WHERE id = #{id}
+    </delete>
+</mapper>

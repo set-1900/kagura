@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.ConsultionMapper">
+
+    <resultMap id="result" type="com.bahu.buffzs.pojo.BuffConsultion">
+        <id column="ID" property="id"/>
+        <result column="type" property="type"/>
+        <result column="icon" property="icon"/>
+        <result column="game_id" property="gameId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="amount_read" property="amountRead"/>
+        <result column="tag" property="tag"/>
+        <result column="time" property="time"/>
+        <result column="gameName" property="gameName"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="result">
+        SELECT bc.*,bg.name as gameName  FROM buff_consultion bc , buff_game bg WHERE bc.game_id = bg.id  ORDER BY time DESC
+    </select>
+
+    <select id="findById" resultMap="result">
+       SELECT bc.*,bg.name as gameName  FROM buff_consultion bc , buff_game bg WHERE bc.id = #{id} AND bc.game_id = bg.id
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffConsultion">
+        INSERT INTO buff_consultion
+        (type,icon,game_id,title,content,amount_read,tag,time)
+        VALUES
+        (#{type},#{icon},#{gameId},#{title},#{content},#{amountRead},#{tag},#{time})
+    </insert>
+
+    <update id="updateSave">
+        UPDATE buff_consultion SET
+        <if test="type != null">
+            type = #{type},
+        </if>
+        <if test="icon != null">
+            icon = #{icon},
+        </if>
+        <if test="gameId != null">
+            game_id = #{gameId},
+        </if>
+        <if test="title != null">
+            title = #{title},
+        </if>
+        <if test="content != null">
+            content = #{content},
+        </if>
+        <if test="amountRead != null">
+            amount_read = #{amountRead},
+        </if>
+        <if test="tag != null">
+            tag = #{tag}
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM buff_consultion WHERE id = #{id}
+    </delete>
+</mapper>

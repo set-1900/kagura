@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.FeedbackTypeMapper">
+
+    <resultMap id="result" type="com.bahu.buffzs.pojo.BuffFeedbackType">
+        <result column="name" property="name"/>
+        <result column="short_describe" property="shortDescribe"/>
+    </resultMap>
+
+    <select id="findAll"  resultMap="result">
+        SELECT * FROM buff_feedback_type ORDER BY id DESC
+    </select>
+
+    <select id="findById" resultMap="result">
+        SELECT * FROM buff_feedback_type WHERE id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffFeedback">
+        INSERT INTO buff_feedback_type
+        (name,short_describe)
+        VALUES
+        (#{name},#{shortDescribe})
+    </insert>
+
+    <update id="updateSave">
+        UPDATE buff_feedback_type SET
+        <if test="name  != null">
+            name = #{name},
+        </if>
+
+        <if test="shortDescribe != null">
+            short_describe = #{shortDescribe}
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM buff_feedback_type WHERE id = #{id}
+    </delete>
+</mapper>

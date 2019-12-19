@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.KeywordMapper">
+
+    <resultMap id="result" type="com.bahu.buffzs.pojo.BuffKeyword">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <select id="findById" resultMap="result">
+        SELECT * FROM buff_keyword WHERE id = #{id} ORDER BY createTime DESC
+    </select>
+
+    <select id="findByName" resultMap="result">
+        SELECT * FROM buff_keyword WHERE name = #{name}
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffKeyword">
+        INSERT INTO buff_keyword
+        (name,createTime)
+        VALUES
+        (#{name},#{createTime})
+    </insert>
+
+    <select id="findBySubchannelId" resultMap="result">
+        SELECT * FROM buff_keyword bk , buff_subchannel_keyword bsk
+        WHERE bk.id = bsk.keywordId and bsk.subchannelId = #{subchannelId}
+    </select>
+
+</mapper>

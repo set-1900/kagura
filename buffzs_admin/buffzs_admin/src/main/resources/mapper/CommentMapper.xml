@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.CommentMapper">
+
+    <resultMap id="result" type="com.bahu.buffzs.pojo.BuffComment">
+        <id column="ID" property="id"/>
+        <result column="content" property="content"/>
+        <result column="from_uid" property="fromUid"/>
+        <result column="topic_type" property="topicType"/>
+        <result column="topic_id" property="topicId"/>
+        <result column="to_uid" property="toUid"/>
+        <result column="add_time" property="addTime"/>
+        <result column="laud" property="laud"/>
+
+        <result column="username" property="username"/>
+        <result column="icon" property="icon"/>
+        <result column="commentNumber" property="commentNumber"/>
+    </resultMap>
+
+    <select id="findAll"  resultMap="result">
+        SELECT * FROM buff_comment ORDER BY add_time DESC
+    </select>
+
+    <select id="findById" resultMap="result">
+        SELECT * FROM buff_comment WHERE id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffComment">
+         INSERT INTO buff_comment (content,from_uid,topic_type,topic_id,to_uid,add_time,laud)
+        VALUES (#{content},#{fromUid},#{topicType},#{topicId},#{toUid},#{addTime},#{laud})
+    </insert>
+
+    <update id="updateSave">
+        UPDATE buff_comment SET
+        <if test="content != null">
+            content = #{content},
+        </if>
+        <if test="fromUid != null">
+            from_uid = #{fromUid},
+        </if>
+        <if test="topicType != null">
+            topic_type = #{topicType},
+        </if>
+        <if test="topicId != null">
+            topic_id = #{topicId},
+        </if>
+        <if test="toUid != null">
+            to_uid = #{toUid},
+        </if>
+        <if test="laud != null">
+            laud = #{laud}
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM buff_comment WHERE id = #{id}
+    </delete>
+</mapper>

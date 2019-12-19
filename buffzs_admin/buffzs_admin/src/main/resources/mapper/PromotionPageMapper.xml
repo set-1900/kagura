@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.PromotionPageMapper">
+
+    <resultMap id="result" type="com.bahu.buffzs.pojo.BuffPromotionPage">
+        <id column="id" property="id"/>
+        <result column="name" property="name" />
+        <result column="url" property="url" />
+        <result column="createTime" property="createTime" />
+        <result column="updateTime" property="updateTime" />
+        <result column="channelId" property="channelId" />
+        <result column="channelName" property="channelName" />
+        <result column="subchannelId" property="subchannelId" />
+        <result column="subchannelName" property="subchannelName" />
+        <result column="keywordId" property="keywordId" />
+        <result column="keywordName" property="keywordName" />
+        <result column="promotionUrl" property="promotionUrl" />
+        <result column="imgUrl" property="imgUrl" />
+    </resultMap>
+
+    <select id="findAll"  resultMap="result">
+        SELECT * FROM buff_promotionPage ORDER BY createTime DESC
+    </select>
+
+    <select id="findById" resultMap="result">
+        SELECT * FROM buff_promotionPage WHERE id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffPromotionPage">
+        INSERT INTO buff_promotionPage
+        (name ,url , createTime, updateTime, channelId, channelName, subchannelId, subchannelName, keywordId, keywordName,promotionUrl,imgUrl)
+        VALUES
+        (#{name},#{url},#{createTime},#{updateTime},#{channelId},#{channelName},#{subchannelId},#{subchannelName},#{keywordId},#{keywordName},#{promotionUrl},#{imgUrl})
+    </insert>
+
+    <update id="updateById">
+        UPDATE buff_promotionPage SET
+        <if test="name != null">
+            name = #{name},
+        </if>
+        <if test="url != null">
+            url = #{url},
+        </if>
+        <if test="createTime != null">
+            createTime = #{createTime},
+        </if>
+        <if test="updateTime != null">
+            updateTime = #{updateTime},
+        </if>
+        <if test="channelId != null">
+            channelId = #{channelId},
+        </if>
+        <if test="channelName != null">
+            channelName = #{channelName},
+        </if>
+        <if test="subchannelId != null">
+            subchannelId = #{subchannelId},
+        </if>
+        <if test="subchannelName != null">
+            subchannelName = #{subchannelName},
+        </if>
+        <if test="keywordId != null">
+            keywordId = #{keywordId},
+        </if>
+        <if test="keywordName != null">
+            keywordName = #{keywordName},
+        </if>
+        <if test="promotionUrl != null">
+            promotionUrl = #{promotionUrl},
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM buff_promotionPage WHERE id = #{id}
+    </delete>
+
+</mapper>

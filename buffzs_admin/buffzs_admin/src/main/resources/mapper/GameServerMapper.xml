@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.GameServerMapper">
+
+    <resultMap id="result" type="com.bahu.buffzs.pojo.BuffGameServer">
+        <id column="server_id" property="serverId"/>
+        <result column="game_id" property="gameId"/>
+        <result column="area_id" property="areaId"/>
+        <result column="server_name" property="serverName"/>
+        <result column="open_date" property="openDate"/>
+        <result column="ifhot" property="ifhot"/>
+        <result column="gameName" property="gameName"/>
+    </resultMap>
+
+    <select id="findAll"  resultMap="result">
+        SELECT bgs.* , bg.name as gameName FROM buff_game_server bgs ,buff_game bg WHERE bgs.game_id = bg.id ORDER BY server_id DESC
+    </select>
+
+    <select id="findById" resultMap="result">
+        SELECT bgs.* , bg.name as gameName FROM buff_game_server bgs ,buff_game bg WHERE bgs.game_id = bg.id AND server_id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffGameServer">
+        INSERT INTO buff_game_server
+        (game_id,area_id,server_name,open_date,ifhot)
+        VALUES
+        (#{gameId},#{areaId},#{serverName},#{openDate},#{ifhot})
+    </insert>
+
+    <update id="updateSave">
+        UPDATE buff_game_server SET
+        <if test="gameId != null">
+            game_id = #{gameId},
+        </if>
+        <if test="areaId != null">
+            area_id = #{areaId},
+        </if>
+        <if test="serverName != null">
+            server_name = #{serverName},
+        </if>
+        <if test="openDate != null">
+            open_date = #{openDate},
+        </if>
+        <if test="ifhot != null">
+            ifhot = #{ifhot}
+        </if>
+        WHERE server_id = #{serverId}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM buff_game_server WHERE server_id = #{id}
+    </delete>
+</mapper>

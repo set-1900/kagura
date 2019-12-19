@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.BannerMapper">
+
+    <resultMap id="resultBanner" type="com.bahu.buffzs.pojo.BuffBanner">
+        <id column="ID" property="id"/>
+        <result column="image_url" property="imageUrl"/>
+        <result column="consultion_id" property="consultionId"/>
+        <result column="module_id" property="moduleId"/>
+        <result column="type" property="type"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="resultBanner">
+        SELECT * FROM buff_banner
+        <if test="type != null or moduleId != null">
+            WHERE
+        </if>
+        <if test="type != null">
+             type = #{type}
+        </if>
+        <if test="type != null and moduleId != null">
+            AND
+        </if>
+        <if test="moduleId != null">
+             module_id = #{moduleId}
+        </if>
+        ORDER BY id DESC
+    </select>
+
+    <select id="findById" resultMap="resultBanner">
+        SELECT * FROM buff_banner WHERE id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffBanner">
+        INSERT INTO buff_banner
+        (image_url,consultion_id,module_id,type)
+        VALUES
+        (#{imageUrl},#{consultionId},#{moduleId},#{type})
+    </insert>
+
+    <update id="updateSave">
+        UPDATE buff_banner SET
+        <if test="imageUrl != null">
+            image_url = #{imageUrl},
+        </if>
+        <if test="consultionId != null">
+            consultion_id = #{consultionId},
+        </if>
+        <if test="moduleId != null">
+            module_id = #{moduleId},
+        </if>
+        <if test="type != null">
+            type = #{type}
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM buff_banner WHERE id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.GameGenresMapper">
+
+    <resultMap id="resultGameGenres" type="com.bahu.buffzs.pojo.BuffGameGenres">
+        <id column="ID" property="id"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+    <select id="findAll"  resultMap="resultGameGenres">
+        SELECT * FROM buff_game_genres ORDER BY id DESC
+    </select>
+
+    <select id="findById" resultMap="resultGameGenres">
+        SELECT * FROM buff_game_genres WHERE id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffGameGenres">
+        INSERT INTO buff_game_genres
+        (name)
+        VALUES
+        (#{name})
+    </insert>
+
+    <update id="updateSave">
+        UPDATE buff_game_genres SET
+        <if test="name != null">
+            name = #{name}
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM buff_game_genres WHERE id = #{id}
+    </delete>
+</mapper>

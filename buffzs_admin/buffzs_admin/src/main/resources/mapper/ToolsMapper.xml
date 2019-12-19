@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.ToolsMapper">
+
+    <resultMap id="resultTools" type="com.bahu.buffzs.pojo.BuffTools">
+            <id column="ID" property="id"/>
+            <result column="icon" property="icon"/>
+            <result column="title" property="title"/>
+            <result column="detail" property="detail"/>
+            <result column="short_describe" property="shortDescribe"/>
+    </resultMap>
+
+    <select id="findAll"  resultMap="resultTools">
+        SELECT * FROM buff_tools  ORDER BY id DESC
+    </select>
+
+    <select id="findById" resultMap="resultTools">
+        SELECT * FROM buff_tools WHERE id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffTools">
+        INSERT INTO buff_tools
+        (icon,title,detail,short_describe)
+        VALUES
+        (#{icon},#{title},#{detail},#{shortDescribe})
+    </insert>
+
+    <update id="updateSave">
+        UPDATE buff_tools SET
+        <if test="icon != null">
+            icon = #{icon},
+        </if>
+        <if test="title != null">
+            title = #{title},
+        </if>
+        <if test="detail != null">
+            detail = #{detail},
+        </if>
+        <if test="shortDescribe != null">
+            short_describe = #{shortDescribe}
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM buff_tools WHERE id = #{id}
+    </delete>
+</mapper>

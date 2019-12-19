@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.FeedbackMapper">
+
+    <resultMap id="result" type="com.bahu.buffzs.pojo.BuffFeedback">
+        <id column="ID" property="id"/>
+        <result column="content" property="content"/>
+        <result column="feedback_type" property="feedbackType"/>
+        <result column="img" property="img"/>
+        <result column="img1" property="img1"/>
+        <result column="img2" property="img2"/>
+        <result column="addTime" property="addTime"/>
+        <result column="contact" property="contact"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+    <select id="findAll"  resultMap="result">
+        SELECT bf.*,bft.name FROM buff_feedback bf ,buff_feedback_type bft WHERE bf.feedback_type = bft.id ORDER BY addTime DESC
+    </select>
+
+    <select id="findById" resultMap="result">
+        SELECT * FROM buff_feedback WHERE id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffFeedback">
+        INSERT INTO buff_feedback
+        (content,feedback_type,img,img1,img2,addTime,contact)
+        VALUES
+        (#{content},#{feedbackType},#{img},#{img1},#{img2},#{addTime},#{contact})
+    </insert>
+
+    <update id="updateSave">
+        UPDATE buff_feedback SET
+        <if test="content != null">
+            content = #{content},
+        </if>
+        <if test="feedbackType != null">
+            feedback_type = #{feedbackType},
+        </if>
+        <if test="img != null">
+            img = #{img},
+        </if>
+        <if test="img1 != null">
+            img1 = #{img1},
+        </if>
+        <if test="img2 != null">
+            img2 = #{img2},
+        </if>
+        <if test="addTime != null">
+            addTime = #{addTime}
+        </if>
+        <if test="contact != null">
+            contact = #{contact}
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM buff_feedback WHERE id = #{id}
+    </delete>
+</mapper>

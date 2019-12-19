@@ -1,0 +1,865 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.UserLoginStatisticsMapper">
+
+    <resultMap id="result" type="com.bahu.buffzs.pojo.dto.UserLoginStatistics">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="date" property="date"/>
+        <result column="addNewUserNumber" property="addNewUserNumber"/>
+        <result column="addNewAccountsNumber" property="addNewAccountsNumber"/>
+        <result column="activeUserNumber" property="activeUserNumber"/>
+        <result column="activeAccountsNumber" property="activeAccountsNumber"/>
+        <result column="startNumber" property="startNumber"/>
+        <result column="nextActive" property="nextActive"/>
+        <result column="sevenActive" property="sevenActive"/>
+        <result column="fifteenActive" property="fifteenActive"/>
+        <result column="thirtyActive" property="thirtyActive"/>
+    </resultMap>
+
+    <resultMap id="resultKeyword" type="com.bahu.buffzs.pojo.dto.KeywordStatisticsDto">
+        <id column="date" property="date"/>
+        <result column="channelId" property="channelId"/>
+        <result column="createChannelName" property="createChannelName"/>
+        <result column="createSubchannelId" property="createSubchannelId"/>
+        <result column="createSubchannelName" property="createSubchannelName"/>
+        <result column="createKeywordId" property="createKeywordId"/>
+        <result column="createKeywordName" property="createKeywordName"/>
+        <result column="addNewUserNumber" property="addNewUserNumber"/>
+        <result column="addNewAccountsNumber" property="addNewAccountsNumber"/>
+        <result column="downloadButtonNumber" property="downloadButtonNumber"/>
+    </resultMap>
+
+    <resultMap id="resultGame" type="com.bahu.buffzs.pojo.dto.StatisticsDto">
+        <id column="date" property="date"/>
+        <result column="gameId" property="gameId"/>
+        <result column="gameName" property="gameName"/>
+        <result column="gameClickCount" property="gameClickCount"/>
+        <result column="gameDownloadCount" property="gameDownloadCount"/>
+    </resultMap>
+
+    <select id="findAll"  resultMap="result">
+        SELECT
+        lefttable.date,
+        ifnull(righttable.addNewUserNumber,0) addNewUserNumber,
+        ifnull(sss.addNewAccountsNumber,0) addNewAccountsNumber,
+        ifnull(aaa.activeUserNumber,0) activeUserNumber,
+        ifnull(bbb.activeAccountsNumber,0) activeAccountsNumber,
+        ifnull(ccc.startNumber,0) startNumber
+        -- ,ifnull(ddd.nextActive,0) nextActive,
+        -- ifnull(eee.sevenActive,0) sevenActive,
+        -- ifnull(fff.fifteenActive,0) fifteenActive,
+        -- ifnull(ggg.thirtyActive,0) thirtyActive
+        FROM
+        (
+        SELECT ADDDATE(y.first, x.d - 1) as date
+        FROM
+        (SELECT 1 AS d UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL
+        SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL
+        SELECT 15 UNION ALL SELECT 16 UNION ALL SELECT 17 UNION ALL SELECT 18 UNION ALL SELECT 19 UNION ALL SELECT 20 UNION ALL SELECT 21 UNION ALL
+        SELECT 22 UNION ALL SELECT 23 UNION ALL SELECT 24 UNION ALL SELECT 25 UNION ALL SELECT 26 UNION ALL SELECT 27 UNION ALL SELECT 28 UNION ALL
+        SELECT 29 UNION ALL SELECT 30 UNION ALL SELECT 31) x,
+        (select date_add(date_add(last_day(now()),interval 1 day),interval -1 month) as FIRST, DAY(LAST_DAY(str_to_date(now(),'%Y-%m'))) AS last) y
+        WHERE x.d &lt;= y.last and ADDDATE(y.first, x.d - 1) &lt;= CURDATE() ) as lefttable  LEFT JOIN (
+
+         SELECT DATE_FORMAT( bm.createTime, '%Y-%m-%d' ) as	date,  count(*) AS addNewUserNumber
+        FROM
+        buff_mobile bm
+        WHERE
+        date_format( bm.createTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+        GROUP BY
+        DATE_FORMAT( bm.createTime, '%Y-%m-%d' )
+
+        ) as righttable
+        ON DATE_FORMAT(lefttable.date,'%Y-%c-%d')=righttable.date
+        LEFT JOIN (
+        SELECT DATE_FORMAT( bu.createTime, '%Y-%m-%d' ) AS date,  count(*) AS addNewAccountsNumber
+        FROM buff_user  bu
+        where
+        date_format(bu.createTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+        GROUP BY
+        DATE_FORMAT( bu.createTime, '%Y-%m-%d' )
+
+        )  as sss
+        ON  DATE_FORMAT(lefttable.date,'%Y-%c-%d')=sss.date
+        LEFT JOIN (
+
+
+      	SELECT
+		DATE_FORMAT( bl.updateTime, '%Y-%m-%d' ) as date,
+		count(DISTINCT bl.modulId) AS activeUserNumber
+		FROM
+			buff_login bl
+		WHERE
+
+		date_format( bl.updateTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' ) GROUP BY
+		DATE_FORMAT( bl.updateTime, '%Y-%m-%d' )
+        ) AS aaa ON DATE_FORMAT( lefttable.date, '%Y-%c-%d' ) = aaa.date
+
+
+
+        LEFT JOIN (
+
+
+     	SELECT
+		DATE_FORMAT( bl.updateTime, '%Y-%m-%d' ) as date,
+		count(DISTINCT bl.modulId) AS activeAccountsNumber
+		FROM
+			buff_login bl
+		WHERE
+			bl.type = 1
+			AND date_format( bl.updateTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' ) GROUP BY
+		DATE_FORMAT( bl.updateTime, '%Y-%m-%d' )
+	) AS bbb ON DATE_FORMAT( lefttable.date, '%Y-%c-%d' ) = bbb.date
+        LEFT JOIN (
+        SELECT
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' ) AS date,
+        count( * ) AS startNumber
+        FROM
+        buff_login bl
+        WHERE
+        date_format( bl.updateTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+        GROUP BY
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' )
+        ) AS ccc ON DATE_FORMAT( lefttable.date, '%Y-%c-%d' ) = ccc.date
+--         LEFT JOIN (
+--             -- 次日活跃
+--             SELECT count(DISTINCT modulId) nextActive, date_format( createTime, '%Y-%m-%d' ) date FROM buff_login bl WHERE date_format( updateTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+--             AND modulId IN (SELECT modulId FROM buff_mobile WHERE date_format( createTime, '%Y-%m-%d' ) = DATE_SUB(date_format( bl.updateTime, '%Y-%m-%d' ), INTERVAL 1 DAY))
+--             GROUP BY DATE_FORMAT( createTime, '%Y-%m-%d' )
+--         ) ddd ON DATE_FORMAT( lefttable.date, '%Y-%c-%d' ) = ddd.date
+--         LEFT JOIN (
+--             -- 七日活跃
+--             SELECT count(DISTINCT modulId) sevenActive, date_format( createTime, '%Y-%m-%d' ) date FROM buff_login bl WHERE date_format( updateTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+--             AND modulId IN (SELECT modulId FROM buff_mobile WHERE date_format( createTime, '%Y-%m-%d' ) = DATE_SUB(date_format( bl.updateTime, '%Y-%m-%d' ), INTERVAL 7 DAY))
+--             GROUP BY DATE_FORMAT( createTime, '%Y-%m-%d' )
+--         ) eee ON DATE_FORMAT( lefttable.date, '%Y-%c-%d' ) = eee.date
+--         LEFT JOIN (
+--             -- 十五日活跃
+--             SELECT count(DISTINCT modulId) fifteenActive, date_format( createTime, '%Y-%m-%d' ) date FROM buff_login bl WHERE date_format( updateTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+--             AND modulId IN (SELECT modulId FROM buff_mobile WHERE date_format( createTime, '%Y-%m-%d' ) = DATE_SUB(date_format( bl.updateTime, '%Y-%m-%d' ), INTERVAL 15 DAY))
+--             GROUP BY DATE_FORMAT( createTime, '%Y-%m-%d' )
+--         ) fff ON DATE_FORMAT( lefttable.date, '%Y-%c-%d' ) = fff.date
+--         LEFT JOIN (
+--             -- 三十日活跃
+--             SELECT count(DISTINCT modulId) thirtyActive, date_format( createTime, '%Y-%m-%d' ) date FROM buff_login bl WHERE date_format( updateTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+--             AND modulId IN (SELECT modulId FROM buff_mobile WHERE date_format( createTime, '%Y-%m-%d' ) = DATE_SUB(date_format( bl.updateTime, '%Y-%m-%d' ), INTERVAL 30 DAY))
+--             GROUP BY DATE_FORMAT( createTime, '%Y-%m-%d' )
+--         ) ggg ON DATE_FORMAT( lefttable.date, '%Y-%c-%d' ) = ggg.date
+        GROUP BY
+        DATE_FORMAT( lefttable.date, '%Y-%m-%d' ) DESC
+    </select>
+
+    <select id="findAllByKeyword"  resultMap="result">
+        SELECT
+        righttable.createChannelName name,
+        ifnull(lefttable.date, 0) date,
+        ifnull(righttable.addNewUserNumber, 0) addNewUserNumber,
+        ifnull(sss.addNewAccountsNumber, 0) addNewAccountsNumber,
+        ifnull(aaa.activeUserNumber, 0) activeUserNumber,
+        ifnull(bbb.activeAccountsNumber, 0) activeAccountsNumber,
+        ifnull(ccc.startNumber, 0) startNumber
+        FROM
+        (
+        SELECT ADDDATE(y.first, x.d - 1) as date
+        FROM
+        (SELECT 1 AS d UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL
+        SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL
+        SELECT 15 UNION ALL SELECT 16 UNION ALL SELECT 17 UNION ALL SELECT 18 UNION ALL SELECT 19 UNION ALL SELECT 20 UNION ALL SELECT 21 UNION ALL
+        SELECT 22 UNION ALL SELECT 23 UNION ALL SELECT 24 UNION ALL SELECT 25 UNION ALL SELECT 26 UNION ALL SELECT 27 UNION ALL SELECT 28 UNION ALL
+        SELECT 29 UNION ALL SELECT 30 UNION ALL SELECT 31) x,
+        (select date_add(date_add(last_day(now()),interval 1 day),interval -1 month) as FIRST, DAY(LAST_DAY(str_to_date(now(),'%Y-%m'))) AS last) y
+        WHERE x.d &lt;= y.last and ADDDATE(y.first, x.d - 1) &lt;= CURDATE() ) as lefttable  LEFT JOIN (
+
+        SELECT createChannelName, DATE_FORMAT( bm.createTime, '%Y-%m-%d' ) as	date,  count(*) AS addNewUserNumber
+        FROM
+        buff_mobile bm
+        WHERE
+        date_format( bm.createTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+        <if test="keyword != null and keyword != ''">
+            AND createkeywordName = #{keyword}
+        </if>
+        <if test="channelId != null and channelId != ''">
+            AND channelId = #{channelId}
+        </if>
+        <if test="subchannelId != null and subchannelId != ''">
+            AND createSubchannelId = #{subchannelId}
+        </if>
+        GROUP BY
+        DATE_FORMAT( bm.createTime, '%Y-%m-%d' )
+
+        ) as righttable
+        ON DATE_FORMAT(lefttable.date,'%Y-%c-%d')=righttable.date
+        LEFT JOIN (
+
+
+        SELECT DATE_FORMAT( bu.createTime, '%Y-%m-%d' ) AS date,  count(*) AS addNewAccountsNumber
+        FROM buff_user  bu
+        where
+        date_format(bu.createTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+        <if test="keyword != null and keyword != ''">
+            AND createkeywordName = #{keyword}
+        </if>
+        <if test="channelId != null and channelId != ''">
+            AND channelId = #{channelId}
+        </if>
+        <if test="subchannelId != null and subchannelId != ''">
+            AND createSubchannelId = #{subchannelId}
+        </if>
+        GROUP BY
+        DATE_FORMAT( bu.createTime, '%Y-%m-%d' )
+
+
+        )  as sss
+        ON  DATE_FORMAT(lefttable.date,'%Y-%c-%d')=sss.date
+        LEFT JOIN (
+
+
+        SELECT
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' ) as date,
+        count(DISTINCT bl.modulId) AS activeUserNumber
+        FROM
+        buff_login bl
+        WHERE
+        <if test="keyword != null and keyword != ''">
+           keywordName = #{keyword} AND
+        </if>
+        <if test="channelId != null and channelId != ''">
+             channelId = #{channelId} AND
+        </if>
+        <if test="subchannelId != null and subchannelId != ''">
+            subchannelId = #{subchannelId} AND
+        </if>
+        date_format( bl.updateTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' ) GROUP BY
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' )
+
+
+        ) AS aaa ON DATE_FORMAT( lefttable.date, '%Y-%c-%d' ) = aaa.date
+        LEFT JOIN (
+
+
+        SELECT
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' ) as date,
+        count(DISTINCT bl.modulId) AS activeAccountsNumber
+        FROM
+        buff_login bl
+        WHERE
+        <if test="keyword != null and keyword != ''">
+            keywordName = #{keyword} AND
+        </if>
+        <if test="channelId != null and channelId != ''">
+             channelId = #{channelId} AND
+        </if>
+        <if test="subchannelId != null and subchannelId != ''">
+            subchannelId = #{subchannelId} AND
+        </if>
+        bl.type = 1
+        AND date_format( bl.updateTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' ) GROUP BY
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' )
+
+
+        ) AS bbb ON DATE_FORMAT( lefttable.date, '%Y-%c-%d' ) = bbb.date
+        LEFT JOIN (
+
+
+        SELECT
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' ) AS date,
+        count( * ) AS startNumber
+        FROM
+        buff_login bl
+        WHERE
+        <if test="keyword != null and keyword != ''">
+            keywordName = #{keyword} AND
+        </if>
+        <if test="channelId != null and channelId != ''">
+             channelId = #{channelId} AND
+        </if>
+        <if test="subchannelId != null and subchannelId != ''">
+            subchannelId = #{subchannelId} AND
+        </if>
+        date_format( bl.updateTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+        GROUP BY
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' )
+
+
+        ) AS ccc ON DATE_FORMAT( lefttable.date, '%Y-%c-%d' ) = ccc.date
+        GROUP BY
+        DATE_FORMAT( lefttable.date, '%Y-%m-%d' ) DESC
+    </select>
+
+
+
+
+    <select id="findLastMonth"  resultMap="result">
+        SELECT
+        lefttable.date,
+        righttable.addNewUserNumber,
+        sss.addNewAccountsNumber,
+        aaa.activeUserNumber,
+        bbb.activeAccountsNumber,
+        ccc.startNumber
+        FROM
+        (
+        SELECT ADDDATE(y.first, x.d - 1) as date
+        FROM
+        (SELECT 1 AS d UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL
+        SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL
+        SELECT 15 UNION ALL SELECT 16 UNION ALL SELECT 17 UNION ALL SELECT 18 UNION ALL SELECT 19 UNION ALL SELECT 20 UNION ALL SELECT 21 UNION ALL
+        SELECT 22 UNION ALL SELECT 23 UNION ALL SELECT 24 UNION ALL SELECT 25 UNION ALL SELECT 26 UNION ALL SELECT 27 UNION ALL SELECT 28 UNION ALL
+        SELECT 29 UNION ALL SELECT 30 UNION ALL SELECT 31) x,
+        (SELECT CONCAT(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 MONTH), '%Y-%m'),'-01') as FIRST, DAY(LAST_DAY(str_to_date(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 MONTH), '%Y-%m'),'%Y-%m'))) AS last) y
+        WHERE x.d &lt;= y.last ) as lefttable LEFT JOIN (
+
+
+        SELECT DATE_FORMAT( bm.createTime, '%Y-%m-%d' ) as	date,  count(*) AS addNewUserNumber
+        FROM
+        buff_mobile bm
+        WHERE
+        PERIOD_DIFF( date_format( now( ) , '%Y%m' ) , date_format( bm.createTime, '%Y%m' ) ) =1
+        <if test="keyword != null">
+            AND createkeywordName = #{keyword}
+        </if>
+        <if test="channelId != null">
+            AND channelId = #{channelId}
+        </if>
+        <if test="subchannelId != null">
+            AND createSubchannelId = #{subchannelId}
+        </if>
+        GROUP BY
+        DATE_FORMAT( bm.createTime, '%Y-%m-%d' )
+
+
+
+        ) as righttable
+        ON DATE_FORMAT(lefttable.date,'%Y-%c-%d')=righttable.date
+        LEFT JOIN (
+
+
+        SELECT DATE_FORMAT( bu.createTime, '%Y-%m-%d' ) AS date,  count(*) AS addNewAccountsNumber
+        FROM buff_user  bu
+        where
+        PERIOD_DIFF( date_format( now( ) , '%Y%m' ) , date_format( bu.createTime, '%Y%m' ) ) =1
+        <if test="keyword != null">
+            AND createkeywordName = #{keyword}
+        </if>
+        <if test="channelId != null">
+            AND channelId = #{channelId}
+        </if>
+        <if test="subchannelId != null">
+            AND createSubchannelId = #{subchannelId}
+        </if>
+        GROUP BY
+        DATE_FORMAT( bu.createTime, '%Y-%m-%d' )
+
+
+        )  as sss
+        ON  DATE_FORMAT(lefttable.date,'%Y-%c-%d')=sss.date
+        LEFT JOIN (
+
+
+        SELECT
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' ) as date,
+        count(DISTINCT bl.modulId) AS activeUserNumber
+        FROM
+        buff_login bl
+        WHERE
+        <if test="keyword != null">
+            keywordName = #{keyword} AND
+        </if>
+        <if test="channelId != null">
+            channelId = #{channelId} AND
+        </if>
+        <if test="subchannelId != null">
+            subchannelId = #{subchannelId} AND
+        </if>
+        PERIOD_DIFF( date_format( now( ) , '%Y%m' ) , date_format( bl.updateTime, '%Y%m' ) ) =1
+        GROUP BY
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' )
+
+
+        ) AS aaa ON DATE_FORMAT( lefttable.date, '%Y-%c-%d' ) = aaa.date
+        LEFT JOIN (
+
+
+        SELECT
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' ) as date,
+        count(DISTINCT bl.modulId) AS activeAccountsNumber
+        FROM
+        buff_login bl
+        WHERE
+        <if test="keyword != null">
+            keywordName = #{keyword} AND
+        </if>
+        <if test="channelId != null">
+            channelId = #{channelId} AND
+        </if>
+        <if test="subchannelId != null">
+            subchannelId = #{subchannelId} AND
+        </if>
+        bl.type = 1
+        AND
+        PERIOD_DIFF( date_format( now( ) , '%Y%m' ) , date_format( bl.updateTime, '%Y%m' ) ) =1
+        GROUP BY
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' )
+
+
+        ) AS bbb ON DATE_FORMAT( lefttable.date, '%Y-%c-%d' ) = bbb.date
+        LEFT JOIN (
+
+
+        SELECT
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' ) AS date,
+        count( * ) AS startNumber
+        FROM
+        buff_login bl
+        WHERE
+        <if test="keyword != null">
+            keywordName = #{keyword} AND
+        </if>
+        <if test="channelId != null">
+            channelId = #{channelId} AND
+        </if>
+        <if test="subchannelId != null">
+            subchannelId = #{subchannelId} AND
+        </if>
+        PERIOD_DIFF( date_format( now( ) , '%Y%m' ) , date_format( bl.updateTime, '%Y%m' ) ) =1
+        GROUP BY
+        DATE_FORMAT( bl.updateTime, '%Y-%m-%d' )
+
+
+        ) AS ccc ON DATE_FORMAT( lefttable.date, '%Y-%c-%d' ) = ccc.date
+        GROUP BY
+        DATE_FORMAT( lefttable.date, '%Y-%m-%d' ) DESC
+    </select>
+
+
+    <select id="findByChannelNum" resultMap="resultKeyword">
+        SELECT
+        lefttable.date,
+        ifnull(righttable.addNewUserNumber, 0) as addNewUserNumber,
+        ifnull(sss.addNewAccountsNumber, 0) as addNewAccountsNumber,
+        ifnull(yyy.downloadButtonNumber, 0) as downloadButtonNumber
+        FROM
+        (
+        SELECT ADDDATE(y.first, x.d - 1) as date
+        FROM
+        (SELECT 1 AS d UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL
+        SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL
+        SELECT 15 UNION ALL SELECT 16 UNION ALL SELECT 17 UNION ALL SELECT 18 UNION ALL SELECT 19 UNION ALL SELECT 20 UNION ALL SELECT 21 UNION ALL
+        SELECT 22 UNION ALL SELECT 23 UNION ALL SELECT 24 UNION ALL SELECT 25 UNION ALL SELECT 26 UNION ALL SELECT 27 UNION ALL SELECT 28 UNION ALL
+        SELECT 29 UNION ALL SELECT 30 UNION ALL SELECT 31) x,
+        (select date_add(date_add(last_day(now()),interval 1 day),interval -1 month) as FIRST, DAY(LAST_DAY(str_to_date(now(),'%Y-%m'))) AS last) y
+        WHERE x.d &lt;= y.last and ADDDATE(y.first, x.d - 1) &lt;= CURDATE() ) as lefttable  LEFT JOIN (
+
+        SELECT DATE_FORMAT( bm.createTime, '%Y-%m-%d' ) as date, channelId, createChannelName, createSubchannelId,
+        createSubchannelName, createKeywordId, createkeywordName, count(id) AS addNewUserNumber
+        FROM
+        buff_mobile bm
+        WHERE
+        date_format( bm.createTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+        <if test="channelId != null">
+            AND channelId = #{channelId}
+        </if>
+        <if test="subchannelId != null">
+            AND createSubchannelId = #{subchannelId}
+        </if>
+        <if test="keywordId != null">
+            AND createKeywordId = #{keywordId}
+        </if>
+        GROUP BY
+        DATE_FORMAT( bm.createTime, '%Y-%m-%d' )
+
+        ) as righttable
+        ON DATE_FORMAT(lefttable.date,'%Y-%c-%d')=righttable.date
+        LEFT JOIN (
+        SELECT DATE_FORMAT( bu.createTime, '%Y-%m-%d' ) AS date, count(id) AS addNewAccountsNumber
+        FROM buff_user  bu
+        where
+        date_format(bu.createTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+        <if test="channelId != null">
+            AND channelId = #{channelId}
+        </if>
+        <if test="subchannelId != null">
+            AND createSubchannelId = #{subchannelId}
+        </if>
+        <if test="keywordId != null">
+            AND createKeywordId = #{keywordId}
+        </if>
+        GROUP BY
+        DATE_FORMAT( bu.createTime, '%Y-%m-%d' )
+
+        )  as sss
+        ON  DATE_FORMAT(lefttable.date,'%Y-%c-%d')=sss.date
+        LEFT JOIN (
+        SELECT DATE_FORMAT( bl.createTime, '%Y-%m-%d' ) AS date, count(id) AS downloadButtonNumber
+        FROM buff_log  bl
+        where
+        date_format(bl.createTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+        <if test="channelId != null">
+            AND channelId = #{channelId}
+        </if>
+        <if test="subchannelId != null">
+            AND subchannelId = #{subchannelId}
+        </if>
+        <if test="keywordId != null">
+            AND keywordId = #{keywordId}
+        </if>
+		AND type = 5
+        GROUP BY
+        DATE_FORMAT( bl.createTime, '%Y-%m-%d' )
+        ) as yyy
+        on DATE_FORMAT(lefttable.date,'%Y-%c-%d')=yyy.date
+        GROUP BY
+        DATE_FORMAT( lefttable.date, '%Y-%m-%d' ) DESC</select>
+
+    <select id="findLastMonthByChannelNum" resultMap="resultKeyword" parameterType="com.bahu.buffzs.pojo.dto.UserLoginStatistics">
+        SELECT
+        lefttable.date,
+        ifnull(righttable.addNewUserNumber, 0) as addNewUserNumber,
+        ifnull(sss.addNewAccountsNumber, 0) as addNewAccountsNumber,
+        ifnull(yyy.downloadButtonNumber, 0) as downloadButtonNumber
+        FROM
+        (
+        SELECT ADDDATE(y.first, x.d - 1) as date
+        FROM
+        (SELECT 1 AS d UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL
+        SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12 UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL
+        SELECT 15 UNION ALL SELECT 16 UNION ALL SELECT 17 UNION ALL SELECT 18 UNION ALL SELECT 19 UNION ALL SELECT 20 UNION ALL SELECT 21 UNION ALL
+        SELECT 22 UNION ALL SELECT 23 UNION ALL SELECT 24 UNION ALL SELECT 25 UNION ALL SELECT 26 UNION ALL SELECT 27 UNION ALL SELECT 28 UNION ALL
+        SELECT 29 UNION ALL SELECT 30 UNION ALL SELECT 31) x,
+        (select date_add(date_add(last_day(now()),interval 1 day),interval -1 month) as FIRST, DAY(LAST_DAY(str_to_date(now(),'%Y-%m'))) AS last) y
+        WHERE x.d &lt;= y.last and ADDDATE(y.first, x.d - 1) &lt;= CURDATE() ) as lefttable  LEFT JOIN (
+
+        SELECT DATE_FORMAT( bm.createTime, '%Y-%m-%d' ) as date, channelId, createChannelName, createSubchannelId,
+        createSubchannelName, createKeywordId, createkeywordName, count(id) AS addNewUserNumber
+        FROM
+        buff_mobile bm
+        WHERE
+        date_format( bm.createTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+        <if test="channelId != null">
+            AND channelId = #{channelId}
+        </if>
+        <if test="subchannelId != null">
+            AND createSubchannelId = #{subchannelId}
+        </if>
+        <if test="keywordId != null">
+            AND createKeywordId = #{keywordId}
+        </if>
+        GROUP BY
+        DATE_FORMAT( bm.createTime, '%Y-%m-%d' )
+
+        ) as righttable
+        ON DATE_FORMAT(lefttable.date,'%Y-%c-%d')=righttable.date
+        LEFT JOIN (
+        SELECT DATE_FORMAT( bu.createTime, '%Y-%m-%d' ) AS date, count(id) AS addNewAccountsNumber
+        FROM buff_user  bu
+        where
+        date_format(bu.createTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+        <if test="channelId != null">
+            AND channelId = #{channelId}
+        </if>
+        <if test="subchannelId != null">
+            AND createSubchannelId = #{subchannelId}
+        </if>
+        <if test="keywordId != null">
+            AND createKeywordId = #{keywordId}
+        </if>
+        GROUP BY
+        DATE_FORMAT( bu.createTime, '%Y-%m-%d' )
+
+        )  as sss
+        ON  DATE_FORMAT(lefttable.date,'%Y-%c-%d')=sss.date
+        LEFT JOIN (
+        SELECT DATE_FORMAT( bl.createTime, '%Y-%m-%d' ) AS date, count(id) AS downloadButtonNumber
+        FROM buff_log  bl
+        where
+        date_format(bl.createTime, '%Y-%m' ) = date_format( now( ), '%Y-%m' )
+        <if test="channelId != null">
+            AND channelId = #{channelId}
+        </if>
+        <if test="subchannelId != null">
+            AND subchannelId = #{subchannelId}
+        </if>
+        <if test="keywordId != null">
+            AND keywordId = #{keywordId}
+        </if>
+        AND type = 5
+        GROUP BY
+        DATE_FORMAT( bl.createTime, '%Y-%m-%d' )
+        ) as yyy
+        on DATE_FORMAT(lefttable.date,'%Y-%c-%d')=yyy.date
+        GROUP BY
+        DATE_FORMAT( lefttable.date, '%Y-%m-%d' ) DESC</select>
+
+    <select id="findByGameName" resultMap="resultGame">
+        SELECT t1.gameId , t4.name as gameName, t2.count as gameClickCount ,t3.count as gameDownloadCount FROM(
+        SELECT DISTINCT(gameId) FROM buff_log where type = 1 or type = 2 and createTime
+        BETWEEN #{startTime} AND #{endTime}
+        ORDER BY gameId asc ) as t1
+        left JOIN (
+        select count(gameId) count,gameId from buff_log
+        WHERE
+        type = 1
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            and createTime BETWEEN #{startTime} AND #{endTime}
+        </if>
+        GROUP BY gameId ) as t2
+        on t1.gameId = t2.gameId
+        left join  (
+        select count(gameId) count,gameId from buff_log
+        WHERE
+        type = 2
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            and createTime BETWEEN #{startTime} AND #{endTime}
+        </if>
+        GROUP BY gameId ) t3
+        on t1.gameId = t3.gameId
+        LEFT JOIN (
+        select id ,name from buff_game ) as t4
+        ON t1.gameId = t4.id
+        ORDER BY t2.count DESC , t3.count DESC ,t1.gameId ASC
+    </select>
+
+    <select id="findByGameName2" resultMap="resultGame">
+        SELECT t2.gameId ,t4.name as gameName ,t2.count as gameClickCount ,t3.count as gameDownloadCount FROM(
+        select count(gameId) count,gameId from buff_log
+        WHERE
+        type = 1
+        <if test="game != null and game != ''">
+            AND gameId = #{game}
+        </if>
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            and createTime BETWEEN #{startTime} AND #{endTime}
+        </if>
+        GROUP BY gameId ) as t2
+        left join  (
+        select count(gameId) count,gameId from buff_log
+        WHERE
+        type = 2
+        <if test="game != null and game != ''">
+            AND gameId = #{game}
+        </if>
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            and createTime BETWEEN #{startTime} AND #{endTime}
+        </if>
+        GROUP BY gameId ) t3
+        on t2.gameId = t3.gameId
+        LEFT JOIN (
+        select id ,name from buff_game WHERE id = #{game}) as t4
+        ON t2.gameId = t4.id
+        ORDER BY t2.count DESC , t3.count DESC
+    </select>
+
+    <select id="findBySubchannelId" resultMap="resultKeyword">
+        SELECT
+        t1.id as createKeywordId ,t1.name as createKeywordName
+        ,t2.count as addNewUserNumber ,t3.count as addNewAccountsNumber ,
+        t4.count as downloadButtonNumber
+        FROM (
+        select DISTINCT(bk.id) ,bk.`name` FROM buff_keyword bk , buff_subchannel_keyword bsk WHERE bk.id = bsk.keywordId and bsk.subchannelId = #{subchannelId}
+        ) as t1 LEFT JOIN (
+        SELECT count(1) count,createKeywordId , createKeywordName FROM buff_mobile bm WHERE createSubchannelId = #{subchannelId}
+        and createTime BETWEEN #{startTime} AND  #{endTime}
+        GROUP BY createKeywordId ORDER BY count desc
+        ) as t2
+        on  t1.id = t2.createKeywordId
+        LEFT JOIN (
+        SELECT count(1) count  , createKeywordId , createKeywordName FROM buff_user bu WHERE createSubchannelId = #{subchannelId}
+        and createTime BETWEEN #{startTime} AND  #{endTime}
+        GROUP BY createKeywordId
+        ) as t3
+        on t1.id = t3.createKeywordId
+        LEFT JOIN (
+        SELECT count(1) count  , keywordId  FROM buff_log bl WHERE subchannelId = #{subchannelId}
+        and createTime BETWEEN #{startTime} AND  #{endTime}
+        GROUP BY keywordId
+        ) as t4
+        on t1.id = t4.keywordId
+        ORDER BY t2.count DESC , t3.count DESC , t1.id ASC
+    </select>
+
+    <!--查询所有渠道-->
+    <select id="findAllChannel"  resultMap="result">
+        SELECT t1.id, t1.name, ifnull(t2.nextActive, 0) nextActive, ifnull(t3.sevenActive, 0) sevenActive, ifnull(t4.fifteenActive, 0) fifteenActive,
+        ifnull(t5.thirtyActive, 0) thirtyActive, ifnull(t6.addNewUserNumber, 0) addNewUserNumber, ifnull(t7.addNewAccountsNumber, 0) addNewAccountsNumber,
+        ifnull(t8.activeUserNumber, 0) activeUserNumber, ifnull(t9.activeAccountsNumber, 0) activeAccountsNumber, ifnull(t10.startNumber, 0) startNumber FROM
+        (
+            -- 所有渠道
+            SELECT id, name FROM buff_channel GROUP BY id
+        ) t1
+        LEFT JOIN
+        (
+            -- 次日活跃
+            SELECT count(DISTINCT a.modulId) nextActive, a.channelId FROM
+                (
+                SELECT modulId, channelId FROM buff_mobile WHERE date_format( createTime, '%Y-%m-%d' ) = DATE_SUB(date_format( #{date}, '%Y-%m-%d' ), INTERVAL 1 DAY)
+                ) a
+                INNER JOIN
+                (
+                SELECT modulId, channelId FROM buff_login WHERE date_format( updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' )
+                ) b
+            ON a.modulId = b.modulId
+            GROUP BY channelId
+        ) t2 ON t1.id = t2.channelId
+        LEFT JOIN
+        (
+            -- 七日活跃
+            SELECT count(DISTINCT a.modulId) sevenActive, a.channelId FROM
+                (
+                SELECT modulId, channelId FROM buff_mobile WHERE date_format( createTime, '%Y-%m-%d' ) = DATE_SUB(date_format( #{date}, '%Y-%m-%d' ), INTERVAL 7 DAY)
+                ) a
+                INNER JOIN
+                (
+                SELECT modulId, channelId FROM buff_login WHERE date_format( updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' )
+                ) b
+            ON a.modulId = b.modulId
+            GROUP BY channelId
+        ) t3 ON t1.id = t3.channelId
+        LEFT JOIN
+        (
+            -- 十五日活跃
+            SELECT count(DISTINCT a.modulId) fifteenActive, a.channelId FROM
+                (
+                SELECT modulId, channelId FROM buff_mobile WHERE date_format( createTime, '%Y-%m-%d' ) = DATE_SUB(date_format( #{date}, '%Y-%m-%d' ), INTERVAL 15 DAY)
+                ) a
+                INNER JOIN
+                (
+                SELECT modulId, channelId FROM buff_login WHERE date_format( updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' )
+                ) b
+            ON a.modulId = b.modulId
+            GROUP BY channelId
+        ) t4 ON t1.id = t4.channelId
+        LEFT JOIN
+        (
+            -- 三十日活跃
+            SELECT count(DISTINCT a.modulId) thirtyActive, a.channelId FROM
+                (
+                SELECT modulId, channelId FROM buff_mobile WHERE date_format( createTime, '%Y-%m-%d' ) = DATE_SUB(date_format( #{date}, '%Y-%m-%d' ), INTERVAL 30 DAY)
+                ) a
+                INNER JOIN
+                (
+                SELECT modulId, channelId FROM buff_login WHERE date_format( updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' )
+                ) b
+            ON a.modulId = b.modulId
+            GROUP BY channelId
+        ) t5 ON t1.id = t5.channelId
+        LEFT JOIN
+        (
+            -- 新增用户
+            SELECT count(id) AS addNewUserNumber, channelId FROM buff_mobile where date_format(createTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' ) GROUP BY channelId
+        ) t6 ON t1.id = t6.channelId
+        LEFT JOIN
+        (
+            -- 新增账号
+            SELECT count(id) AS addNewAccountsNumber, channelId FROM buff_user where date_format(createTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' ) GROUP BY channelId
+        ) t7 ON t1.id = t7.channelId
+        LEFT JOIN
+        (
+            -- 活跃用户
+            SELECT count(DISTINCT modulId) AS activeUserNumber, channelId FROM buff_login WHERE date_format(updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' ) GROUP BY channelId
+        ) t8 ON t1.id = t8.channelId
+        LEFT JOIN
+        (
+            -- 活跃账号
+            SELECT count(DISTINCT modulId) AS activeAccountsNumber, channelId FROM buff_login WHERE date_format(updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' ) AND type = 1 GROUP BY channelId
+        ) t9 ON t1.id = t9.channelId
+        LEFT JOIN
+        (
+            -- 启动次数
+            SELECT count(id) AS startNumber, channelId FROM buff_login WHERE date_format(updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' ) GROUP BY channelId
+        ) t10 ON t1.id = t10.channelId
+        GROUP BY t1.id
+    </select>
+    <select id="findByChannelId" resultMap="result">
+SELECT t1.id, t1.name, ifnull(t2.nextActive, 0) nextActive, ifnull(t3.sevenActive, 0) sevenActive, ifnull(t4.fifteenActive, 0) fifteenActive,
+        ifnull(t5.thirtyActive, 0) thirtyActive, ifnull(t6.addNewUserNumber, 0) addNewUserNumber, ifnull(t7.addNewAccountsNumber, 0) addNewAccountsNumber,
+        ifnull(t8.activeUserNumber, 0) activeUserNumber, ifnull(t9.activeAccountsNumber, 0) activeAccountsNumber, ifnull(t10.startNumber, 0) startNumber FROM
+        (
+            -- 所有渠道
+            SELECT id, name FROM buff_channel where id = #{channelId} GROUP BY id
+        ) t1
+        LEFT JOIN
+        (
+            -- 次日活跃
+            SELECT count(DISTINCT a.modulId) nextActive, a.channelId FROM
+                (
+                SELECT modulId, channelId FROM buff_mobile WHERE date_format( createTime, '%Y-%m-%d' ) = DATE_SUB(date_format( #{date}, '%Y-%m-%d' ), INTERVAL 1 DAY)
+                ) a
+                INNER JOIN
+                (
+                SELECT modulId, channelId FROM buff_login WHERE date_format( updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' )
+                ) b
+            ON a.modulId = b.modulId
+            GROUP BY channelId
+        ) t2 ON t1.id = t2.channelId
+        LEFT JOIN
+        (
+            -- 七日活跃
+            SELECT count(DISTINCT a.modulId) sevenActive, a.channelId FROM
+                (
+                SELECT modulId, channelId FROM buff_mobile WHERE date_format( createTime, '%Y-%m-%d' ) = DATE_SUB(date_format( #{date}, '%Y-%m-%d' ), INTERVAL 7 DAY)
+                ) a
+                INNER JOIN
+                (
+                SELECT modulId, channelId FROM buff_login WHERE date_format( updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' )
+                ) b
+            ON a.modulId = b.modulId
+            GROUP BY channelId
+        ) t3 ON t1.id = t3.channelId
+        LEFT JOIN
+        (
+            -- 十五日活跃
+            SELECT count(DISTINCT a.modulId) fifteenActive, a.channelId FROM
+                (
+                SELECT modulId, channelId FROM buff_mobile WHERE date_format( createTime, '%Y-%m-%d' ) = DATE_SUB(date_format( #{date}, '%Y-%m-%d' ), INTERVAL 15 DAY)
+                ) a
+                INNER JOIN
+                (
+                SELECT modulId, channelId FROM buff_login WHERE date_format( updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' )
+                ) b
+            ON a.modulId = b.modulId
+            GROUP BY channelId
+        ) t4 ON t1.id = t4.channelId
+        LEFT JOIN
+        (
+            -- 三十日活跃
+            SELECT count(DISTINCT a.modulId) thirtyActive, a.channelId FROM
+                (
+                SELECT modulId, channelId FROM buff_mobile WHERE date_format( createTime, '%Y-%m-%d' ) = DATE_SUB(date_format( #{date}, '%Y-%m-%d' ), INTERVAL 30 DAY)
+                ) a
+                INNER JOIN
+                (
+                SELECT modulId, channelId FROM buff_login WHERE date_format( updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' )
+                ) b
+            ON a.modulId = b.modulId
+            GROUP BY channelId
+        ) t5 ON t1.id = t5.channelId
+        LEFT JOIN
+        (
+            -- 新增用户
+            SELECT count(id) AS addNewUserNumber, channelId FROM buff_mobile where date_format(createTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' ) GROUP BY channelId
+        ) t6 ON t1.id = t6.channelId
+        LEFT JOIN
+        (
+            -- 新增账号
+            SELECT count(id) AS addNewAccountsNumber, channelId FROM buff_user where date_format(createTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' ) GROUP BY channelId
+        ) t7 ON t1.id = t7.channelId
+        LEFT JOIN
+        (
+            -- 活跃用户
+            SELECT count(DISTINCT modulId) AS activeUserNumber, channelId FROM buff_login WHERE date_format(updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' ) GROUP BY channelId
+        ) t8 ON t1.id = t8.channelId
+        LEFT JOIN
+        (
+            -- 活跃账号
+            SELECT count(DISTINCT modulId) AS activeAccountsNumber, channelId FROM buff_login WHERE date_format(updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' ) AND type = 1 GROUP BY channelId
+        ) t9 ON t1.id = t9.channelId
+        LEFT JOIN
+        (
+            -- 启动次数
+            SELECT count(id) AS startNumber, channelId FROM buff_login WHERE date_format(updateTime, '%Y-%m-%d' ) = date_format( #{date}, '%Y-%m-%d' ) GROUP BY channelId
+        ) t10 ON t1.id = t10.channelId
+        GROUP BY t1.id
+    </select>
+</mapper>

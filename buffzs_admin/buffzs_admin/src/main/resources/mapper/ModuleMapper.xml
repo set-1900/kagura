@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.ModuleMapper">
+
+    <resultMap id="result" type="com.bahu.buffzs.pojo.BuffModule">
+        <id column="ID" property="id"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="pid" property="pid"/>
+        <result column="sequence" property="sequence"/>
+        <result column="iconUrl" property="iconUrl"/>
+        <result column="gameid" property="gameid"/>
+        <result column="pName" property="pName"/>
+        <result column="level" property="level"/>
+        <result column="moduleType" property="moduleType"/>
+    </resultMap>
+
+    <select id="findAll" resultType="com.bahu.buffzs.pojo.BuffModule">
+         SELECT
+            t.name,
+            t.pid,
+            t.id,
+            t.sequence,
+            t.type,
+            t.iconUrl,
+            t.level,
+            t.moduleType,
+            c.name AS pName
+        FROM
+            (
+        SELECT
+            a.name,
+            a.pid,
+            a.id,
+            a.sequence,
+            a.type,
+            a.iconUrl,
+            a.level,
+            a.moduleType
+        FROM
+            buff_module a,
+            buff_module b
+        WHERE
+            a.id = b.id
+            ) t
+            LEFT JOIN buff_module c ON t.pid = c.id
+            ORDER BY id DESC
+    </select>
+
+    <select id="findById" resultMap="result">
+        SELECT * FROM buff_module where id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffModule">
+        INSERT INTO buff_module
+        (name,pid,type,sequence,iconUrl,level,moduleType)
+        VALUES
+        (#{name},#{pid},#{type},#{sequence},#{iconUrl},#{level},#{moduleType})
+    </insert>
+
+    <update id="updateSave">
+        UPDATE buff_module SET
+        <if test="name != null">
+            name = #{name},
+        </if>
+        <if test="pid != null">
+            pid = #{pid},
+        </if>
+        <if test="type != null">
+            type = #{type},
+        </if>
+        <if test="iconUrl != null">
+            iconUrl = #{iconUrl},
+        </if>
+        <if test="level != null">
+            level = #{level},
+        </if>
+        <if test="moduleType != null">
+            moduleType = #{moduleType},
+        </if>
+        <if test="sequence != null">
+            sequence = #{sequence}
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM buff_module WHERE id = #{id}
+    </delete>
+
+    <select id="queryByPId" resultType="com.bahu.buffzs.pojo.BuffModule">
+        SELECT * from buff_module WHERE pid = #{pid}
+    </select>
+
+    <select id="find" resultMap="result">
+        SELECT * from buff_module
+    </select>
+
+    <select id="findByName" resultMap="result">
+        SELECT * from buff_module
+        <if test="name != null and name !='' ">
+            WHERE name LIKE concat('%',#{name,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+    <insert id="saveGameModule">
+        INSERT INTO buff_game_module VALUES (#{gameId},#{moduleId})
+    </insert>
+
+    <select id="findByGameId" resultMap="result">
+        SELECT * FROM buff_module bm ,buff_game_module bgm WHERE bm.id = bgm.moduleId AND bgm.gameId = #{id}
+    </select>
+
+    <delete id="deleteByGameId">
+        DELETE FROM buff_game_module WHERE gameId = #{gameId}
+    </delete>
+
+
+    <select id="queryByPIdAndType" resultMap="result">
+        SELECT * from buff_module WHERE type = #{type}
+        <if test="pid != null">
+            AND pid = #{pid}
+        </if>
+    </select>
+
+
+
+    <select id="findAllByModuleType" resultType="com.bahu.buffzs.pojo.BuffModule">
+        SELECT
+        t.name,
+        t.pid,
+        t.id,
+        t.sequence,
+        t.type,
+        t.iconUrl,
+        t.level,
+        t.moduleType,
+        c.name AS pName
+        FROM
+        (
+        SELECT
+        a.name,
+        a.pid,
+        a.id,
+        a.sequence,
+        a.type,
+        a.iconUrl,
+        a.level,
+        a.moduleType
+        FROM
+        buff_module a,
+        buff_module b
+        WHERE
+        a.id = b.id
+        <if test="moduleType != null">
+            and a.moduleType = #{moduleType}
+        </if>
+        ) t
+        LEFT JOIN buff_module c ON t.pid = c.id
+    </select>
+</mapper>

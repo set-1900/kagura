@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.UserMapper">
+
+    <resultMap id="result" type="com.bahu.buffzs.pojo.BuffUser">
+        <id column="ID" property="id"/>
+        <result column="username" property="username"/>
+        <result column="sex" property="sex"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="cityName" property="cityName"/>
+        <result column="signature" property="signature"/>
+        <result column="IDCARD" property="idCard"/>
+        <result column="realname" property="realname"/>
+        <result column="qq" property="qq"/>
+        <result column="phone" property="phone"/>
+        <result column="icon" property="icon"/>
+        <result column="praise" property="praise"/>
+        <result column="ip" property="ip"/>
+        <result column="version" property="version"/>
+        <result column="userType" property="userType"/>
+        <result column="uid" property="uid"/>
+        <result column="createTime" property="createTime"/>
+        <result column="updateTime" property="updateTime"/>
+
+    </resultMap>
+
+    <select id="findAll"  resultMap="result">
+        <!--select bu.* ,ba.name as cityName FROM-->
+        <!--buff_user bu LEFT JOIN buff_area ba on bu.city = ba.id-->
+        <!--<if test="username !=null and username !=''">-->
+            <!--<bind name="usrName" value="'%' + username + '%'"/>-->
+            <!--AND username like #{usrName}-->
+        <!--</if>-->
+        <!--ORDER BY id DESC-->
+        select a.*,ba.name as cityName from
+        (select * FROM buff_user bu
+        <if test="username !=null and username !='' || phone !=null and phone !=''">
+            WHERE
+        </if>
+        <if test="username !=null and username !=''">
+            <bind name="usrName" value="'%' + username + '%'"/>
+             username like #{usrName}
+        </if>
+        <if test="username !=null and username !='' and phone !=null and phone !=''">
+          AND
+        </if>
+        <if test="phone !=null and phone !=''">
+            <bind name="phone1" value="'%' + phone + '%'"/>
+            phone like #{phone1}
+        </if>
+        ) a
+        LEFT JOIN buff_area ba on a.city = ba.id ORDER BY createTime DESC
+    </select>
+
+    <select id="findById" resultMap="result">
+        SELECT * FROM buff_user WHERE id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffUser">
+           INSERT INTO buff_user
+        (username,sex,province,city,signature,IDCARD,realname,qq,
+        phone,icon,praise,ip,version,userType,uid,createTime,updateTime)
+        VALUES
+        (#{username},#{sex},#{province},#{city},#{signature},#{idCard},#{realname},#{qq},
+        #{phone},#{icon},#{praise},#{ip},#{version},#{userType},#{uid},#{createTime},#{updateTime})
+    </insert>
+
+    <update id="updateSave">
+        update buff_user
+        <set>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="province != null">
+                province = #{province},
+            </if>
+            <if test="city != null">
+                city = #{city},
+            </if>
+            <if test="signature != null">
+                signature = #{signature},
+            </if>
+            <if test="idCard != null">
+                IDCARD = #{idCard},
+            </if>
+            <if test="realname != null">
+                realname = #{realname},
+            </if>
+            <if test="qq != null">
+                qq = #{qq},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="icon != null">
+                icon = #{icon},
+            </if>
+            <if test="praise != null">
+                praise = #{praise},
+            </if>
+            <if test="ip != null">
+                ip = #{ip},
+            </if>
+            <if test="version != null">
+                version = #{version},
+            </if>
+            <if test="userType != null">
+                userType = #{userType},
+            </if>
+            <if test="uid != null">
+                uid = #{uid},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                updateTime = #{updateTime}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM buff_user WHERE id = #{id}
+    </delete>
+
+    <select id="findArea" resultType="com.bahu.buffzs.pojo.BuffArea">
+        select * from buff_area where level = 1
+    </select>
+
+    <select id="findCity" resultType="com.bahu.buffzs.pojo.BuffArea">
+        select * from buff_area a ,
+        (select id from buff_area  where name = #{name}) b WHERE a.pid = b.id
+    </select>
+</mapper>

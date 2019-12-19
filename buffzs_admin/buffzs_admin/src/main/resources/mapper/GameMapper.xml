@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bahu.buffzs.mapper.GameMapper">
+    <resultMap id="AllGameBo" type="com.bahu.buffzs.pojo.dto.GameBo">
+        <id column="ID" property="id"/>
+        <result column="name" property="name"/>
+        <result column="icon" property="icon"/>
+        <result column="label" property="label"/>
+        <result column="short_describe" property="shortDescribe"/>
+        <result column="version" property="version"/>
+        <result column="size" property="size"/>
+        <result column="download_url" property="downloadUrl"/>
+        <result column="genres" property="genres"/>
+        <result column="packageName" property="packageName"/>
+        <result column="module" property="module"/>
+        <result column="describe" property="describe"/>
+        <result column="pic_h" property="pic_h"/>
+        <result column="pic_v1" property="pic_v1"/>
+        <result column="pic_v2" property="pic_v2"/>
+        <result column="pic_v3" property="pic_v3"/>
+        <result column="pic_v4" property="pic_v4"/>
+        <result column="pic_v5" property="pic_v5"/>
+        <result column="pic_v6" property="pic_v6"/>
+        <result column="pluginid" property="pluginid"/>
+        <result column="ifbanner" property="ifbanner"/>
+        <result column="ifquestion" property="ifquestion"/>
+        <result column="countryId" property="countryId"/>
+        <result column="level" property="level"/>
+        <result column="haiWaiLevel" property="haiWaiLevel"/>
+        <result column="iconId" property="iconId"/>
+
+        <result column="bmName" property="bmName"/>
+        <result column="genresName" property="genresName"/>
+
+        <result column="open_date" property="openDate"/>
+        <result column="server_name" property="serverName"/>
+    </resultMap>
+
+    <resultMap id="resultBuffGame" type="com.bahu.buffzs.pojo.BuffGame">
+        <id column="ID" property="id"/>
+        <result column="name" property="name"/>
+        <result column="icon" property="icon"/>
+        <result column="label" property="label"/>
+        <result column="short_describe" property="shortDescribe"/>
+        <result column="version" property="version"/>
+        <result column="size" property="size"/>
+        <result column="download_url" property="downloadUrl"/>
+        <result column="genres" property="genres"/>
+        <result column="packageName" property="packageName"/>
+        <result column="module" property="module"/>
+        <result column="detail_describe" property="detailDescribe"/>
+        <result column="pic_h" property="pic_h"/>
+        <result column="pic_v1" property="pic_v1"/>
+        <result column="pic_v2" property="pic_v2"/>
+        <result column="pic_v3" property="pic_v3"/>
+        <result column="pic_v4" property="pic_v4"/>
+        <result column="pic_v5" property="pic_v5"/>
+        <result column="pic_v6" property="pic_v6"/>
+        <result column="pluginid" property="pluginid"/>
+        <result column="ifbanner" property="ifbanner"/>
+        <result column="ifquestion" property="ifquestion"/>
+        <result column="countryId" property="countryId"/>
+        <result column="level" property="level"/>
+        <result column="haiWaiLevel" property="haiWaiLevel"/>
+        <result column="iconId" property="iconId"/>
+        <result column="gameStatus" property="gameStatus"/>
+    </resultMap>
+
+
+    <resultMap id="resultGameServer" type="com.bahu.buffzs.pojo.BuffGameServer">
+        <id column="server_id" property="serverId"/>
+        <result column="game_id" property="gameId"/>
+        <result column="area_id" property="areaId"/>
+        <result column="server_name" property="serverName"/>
+        <result column="open_date" property="openDate"/>
+        <result column="ifhot" property="ifhot"/>
+    </resultMap>
+
+
+    <select id="findAll" resultMap="resultBuffGame">
+        SELECT
+            bg.*
+        FROM
+            buff_game bg
+        <if test="name != null and name !='' ">
+            WHERE bg.name LIKE concat('%',#{name,jdbcType=VARCHAR},'%')
+        </if>
+        ORDER BY
+        bg.id DESC
+    </select>
+
+    <insert id="save" parameterType="com.bahu.buffzs.pojo.BuffGame" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO buff_game
+        (name,icon,short_describe,
+        version,size,download_url,genres,
+        packageName,detail_describe,pic_h,
+        pic_v1,pic_v2,pic_v3,pic_v4,pic_v5,pic_v6,pluginid,ifbanner,ifquestion,countryId,level,haiWaiLevel,iconId ,gameStatus)
+        VALUES
+        (#{name},#{icon},#{shortDescribe},
+        #{version},#{size},#{downloadUrl},#{genres},
+        #{packageName},#{detailDescribe},#{pic_h},
+        #{pic_v1},#{pic_v2},#{pic_v3},#{pic_v4},#{pic_v5},#{pic_v6},#{pluginid},#{ifbanner},
+        #{ifquestion},#{countryId},#{level},#{haiWaiLevel},#{iconId},#{gameStatus})
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM buff_game WHERE id = #{id}
+    </delete>
+
+    <select id="findById" resultMap="resultBuffGame">
+        SELECT * FROM buff_game where id = #{id}
+    </select>
+
+    <update id="updateSave">
+        UPDATE buff_game SET
+        <if test="name != null">
+            name = #{name},
+        </if>
+        <if test="icon != null">
+            icon = #{icon},
+        </if>
+        <if test="shortDescribe != null">
+            short_describe = #{shortDescribe},
+        </if>
+        <if test="version != null">
+            version = #{version},
+        </if>
+        <if test="size != null">
+            size = #{size},
+        </if>
+        <if test="downloadUrl != null">
+            download_url = #{downloadUrl},
+        </if>
+        <if test="genres != null">
+            genres = #{genres},
+        </if>
+        <if test="packageName != null">
+            packageName = #{packageName},
+        </if>
+        <if test="detailDescribe != null">
+            detail_describe = #{detailDescribe},
+        </if>
+        <if test="pic_h != null">
+            pic_h = #{pic_h},
+        </if>
+        <if test="pic_v1 != null">
+            pic_v1 = #{pic_v1},
+        </if>
+        <if test="pic_v2 != null">
+            pic_v2 = #{pic_v2},
+        </if>
+        <if test="pic_v3 != null">
+            pic_v3 = #{pic_v3},
+        </if>
+        <if test="pic_v4 != null">
+            pic_v4 = #{pic_v4},
+        </if>
+        <if test="pic_v5 != null">
+            pic_v5 = #{pic_v5},
+        </if>
+        <if test="pic_v6 != null">
+            pic_v6 = #{pic_v6},
+        </if>
+        <if test="pluginid != null">
+            pluginid = #{pluginid},
+        </if>
+        <if test="ifquestion != null">
+            ifquestion = #{ifquestion},
+        </if>
+        <if test="ifbanner != null">
+            ifbanner = #{ifbanner},
+        </if>
+        <if test="level != null">
+            level = #{level},
+        </if>
+        <if test="haiWaiLevel != null">
+            haiWaiLevel = #{haiWaiLevel},
+        </if>
+        <if test="iconId != null">
+            iconId = #{iconId},
+        </if>
+        <if test="countryId != null">
+            countryId = #{countryId},
+        </if>
+        <if test="gameStatus != null">
+            gameStatus = #{gameStatus}
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectGameByName" resultMap="resultBuffGame">
+        select bg.id,bg.name from buff_game bg
+        <if test="name != null and name !='' ">
+            WHERE name LIKE concat('%',#{name,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+    <delete id="deleteByGameId">
+        DELETE FROM buff_game_label WHERE gameId = #{gameId}
+    </delete>
+</mapper>

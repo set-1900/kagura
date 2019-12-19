@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<!-- saved from url=(0140)http://share.buffzs.com/share/index.html?userId=35&phone=18520314537&modulId=248dc268194e60b785cd7d110dbae201&type=1&timestamp=1575539314187 -->
+<html lang=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <title>buff助手</title>
+    <style type="text/css">
+        body, p, div, input, h1, h2, h3, h4, h5, h6, ul, li, dl, dt, dd, form {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            vertical-align: middle;
+        }
+
+        body {
+            background-color: #FFF;
+        }
+
+        img {
+            vertical-align: middle;
+            display: block;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+		#wraper{
+			position: relative;
+            min-height: 100vh;
+            padding-bottom: 95px;
+            box-sizing: border-box;
+		}
+
+        #wraper, .section {
+            width: 100%;
+			height: 65px;
+            line-height: 65px;
+            text-align: center;
+            font-size: 15px;
+            background-color: #ffffff;
+        }
+
+        .copyright {
+            width: 100%;
+            padding: .56rem 0 0;
+            font-size: 13px;
+            color: #7368a8;
+            margin: 0 auto;
+            text-align: center;
+            background-color: #000;
+        }
+
+        #sliders {
+            padding: 3%;
+            overflow: hidden;
+        }
+
+        /****** 动态 *******/
+        #banner {
+            width: 100%;
+            position: fixed;
+            z-index: 100;
+            top: 0;
+        }
+
+        .layer-tips {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            background: rgba(0, 0, 0, .8);
+            top: 0;
+            left: 0;
+        }
+
+        .down-btn {
+            top: 0;
+            overflow: hidden;
+            background: #ED4521;
+            color: #fff;
+            height: 42px;
+            opacity: 0.7;
+            position: fixed;
+            line-height: 42px;
+            left: 25%;
+            display: block;
+            z-index: 1000;
+            width: 50%;
+            margin: 0 auto;
+            border-radius: 40px;
+            text-align: center;
+            font-size: 16px;
+            text-decoration: none;
+        }
+		
+		.btn {
+            position: fixed;
+            text-align: center;
+            bottom: 0;
+         
+            margin: 25px 0;
+           
+            background:url(20191114175243.png);border:0px;
+         
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+    </style>
+
+<script type="text/javascript" src="./buff助手_files/07bdcd21-24e1-42b3-8226-6ba2575efd3d96.apk&amp;type=1&amp;ver=AD3-mywz-gfz01"></script></head>
+
+
+<body>
+
+<!--<button type="button" onclick="displayDate()">调起安卓方法</button>
+<script>
+    function displayDate(){
+        AndroidH5WebView.test()
+    }
+</script>-->
+
+<div id="wraper">
+
+
+    <div class="section">
+        <a href="javascript:"><img src="./buff助手_files/fenxiang1.jpg"></a>
+    </div>
+	
+    <!--<div class="section">
+        <a href="javascript:download()"><img src="//fp.moxiwh4.com//images/2019-09-18/5d81a526f36b18.70596884.jpg"></a>
+    </div>
+    <div class="section">
+        <a href="javascript:download()"><img src="//fp.moxiwh4.com//images/2019-09-18/5d81a52701b9a1.80873751.jpg"></a>
+    </div>
+    <div class="section">
+        <a href="javascript:download()"><img src="//fp.moxiwh4.com//images/2019-09-18/5d81a5270297a3.08492507.jpg"></a>
+    </div>
+    <div class="section">
+        <a href="javascript:download()"><img src="//fp.moxiwh4.com//images/2019-09-18/5d81a52704c115.19568655.gif"></a>
+    </div>-->
+	<a id="link" class="btn" href="http://localhost:8081/apk/shareApk?url=" onclick="downloadUrl(this)"><img src="./buff助手_files/an1.png"></a>
+	
+</div>
+
+<div class="layer-tips" id="wechattips"><img src="./buff助手_files/weixin_tips.png"></div>
+
+<script type="text/javascript">
+
+    function downloadUrl(a) {
+        var href = a.href;
+        var n = href.search(/\/share/);
+        if (n != -1) {
+            return;
+        }
+        var url = window.location.href;
+        var index = url.search(/\?/);
+        url.substring(index, url.length);
+        a.href += url;
+
+    }
+
+	function dodownload(){
+		alert(123);
+	}
+
+    function $_GET(name, forward) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+
+        if (r != null) return r[2];
+        return forward;
+    }
+
+    function getCookie(name) {
+        var search = name + "=";
+        var returnvalue = "";
+        if (document.cookie.length > 0) {
+            offset = document.cookie.indexOf(search);
+            if (offset != -1) {
+                offset += search.length;
+                end = document.cookie.indexOf(";", offset);
+                if (end == -1) {
+                    end = document.cookie.length;
+                }
+                returnvalue = unescape(document.cookie.substring(offset, end));
+            }
+        }
+        return returnvalue;
+    }
+
+    function setCookie(name, value, cookie_time, domain) {
+        var then = new Date();
+        then.setTime(then.getTime() + cookie_time * 1000);
+        document.cookie = name + '=' + value + ';expires=' + then.toGMTString() + ';path=/' + ((domain) ? ';domain=' + domain : '');
+    }
+
+    function loadScript(src) {
+        if (!src) return;
+        var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = src;
+        head.appendChild(script);
+    }
+
+    function download(url) {
+        try {
+            clearTimeout(interval);
+        } catch (e) {
+        }
+
+        if (isweixin && !isios) {
+            var _tipobj = document.getElementById("wechattips");
+            _tipobj.style.display = 'block';
+            return true;
+        }
+
+        if (!url) {
+            //IOS的脸颊并且是IOS的设备跳转IOS下载链接
+            if (iosdown && isios) {
+                url = apk_url;
+            } else {
+                _v = $_GET('ver');
+                _vios = $_GET('iosver');
+                _vsource = $_GET('source');
+                _vkeyword = $_GET('keyword');
+                if (isios && _vios != "" && _vios) {
+                    _v = _vios;
+                } else if (_vios != "" && _vios && (_v == "" || !_v)) {
+                    _v = _vios;
+                }
+
+                if (_v) {
+                    url = _packdomain + _v + '.apk';
+                } else if (apk_url != "" && apk_url) {
+                    url = apk_url;
+                } else if (ver != "") {
+                    url = _packdomain + ver + '.apk';
+                } else {
+                    url = "";
+                }
+            }
+        }
+        window.location.href = url;
+        setTimeout(function () {
+            if (_v) {
+                loadScript(counturl + '&type=2&ver=' + _v + '&rand=' + Math.random());
+                if (_vkeyword && typeof _vkeyword != "undefined") {
+                    loadScript(keywordcounturl + '&source=' + _vsource + '&keyword=' + _vkeyword + '&type=2&ver=' + _v + '&rand=' + Math.random());
+                }
+            } else {
+                loadScript(counturl + '&type=2&ver=' + ver + '&rand=' + Math.random());
+                if (_vkeyword && typeof _vkeyword != "undefined") {
+                    loadScript(keywordcounturl + '&source=' + _vsource + '&keyword=' + _vkeyword + '&type=2&ver=' + ver + '&rand=' + Math.random());
+                }
+            }
+        }, 200);
+    }
+
+    var interval = 0;
+    var ua = navigator.userAgent.toLowerCase();
+    var isweixin = ua.indexOf('micromessenger') != -1 ? true : false;
+    var isios = /ipad|ipod|iphone|mac/.test(ua);
+
+    var ver = 'AD3-mywz-gfz01';
+    var _v = null, _vios = null, _vsource = null, _vkeyword = null;
+    var _packdomain = 'https://pl.moxiwh4.com/';
+    var iosdown = false;
+
+    //var apk_url = 'https://pl.moxiwh4.com/gamepacks/AD3-mywz-gfz01.apk';//advter apk url
+    var apk_url = 'http://admin.buffzs.com/img/apkVersion/2019-11-05/07bdcd21-24e1-42b3-8226-6ba2575efd3d96.apk';//advter apk url
+    //var counturl = 'https://coun.moxiwh4.com/index.php?act=ad&appid=100147';//pv url
+    var counturl = 'http://admin.buffzs.com/img/apkVersion/2019-11-05/07bdcd21-24e1-42b3-8226-6ba2575efd3d96.apk';//pv url
+    //var keywordcounturl = 'https://coun.moxiwh4.com/index.php?act=ak&appid=100147';//keyword url
+    var keywordcounturl = 'https://coun.moxiwh4.com/index.php?act=ak&appid=100147';//keyword url
+
+    _v = $_GET('ver');
+    _vios = $_GET('iosver');
+    _vsource = $_GET('source');
+    _vkeyword = $_GET('keyword');
+
+    if (isios && _vios != "" && _vios) {
+        _v = _vios;
+    } else if (_vios != "" && _vios && (_v == "" || !_v)) {
+        _v = _vios;
+    }
+
+    if (_v) {
+        loadScript(counturl + '&type=1&ver=' + _v);
+        if (_vkeyword && typeof _vkeyword != "undefined") {
+            loadScript(keywordcounturl + '&source=' + _vsource + '&keyword=' + _vkeyword + '&type=1&ver=' + _v);
+        }
+    } else {
+        loadScript(counturl + '&type=1&ver=' + ver);
+        if (_vkeyword && typeof _vkeyword != "undefined") {
+            loadScript(keywordcounturl + '&source=' + _vsource + '&keyword=' + _vkeyword + '&type=1&ver=' + ver);
+        }
+    }
+
+
+    window.onload = function () {
+
+        if (isweixin) {
+            //微信下载提示
+            document.getElementById("wechattips").addEventListener('touchstart', function (e) {
+                this.style.display = 'none';
+                e.preventDefault();
+            }, false);
+        }
+
+    }
+</script>
+
+
+
+
+</body></html>
